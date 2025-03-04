@@ -7,7 +7,7 @@ M.version = "0.1.0"
 
 -- Other version information
 M.min_neovim_version = "0.8.0"
-M.homepage = "https://github.com/USERNAME/neovim-config-template"
+M.homepage = "https://github.com/greggh/neovim-config-template"
 M.license = "MIT"
 
 -- Version check function

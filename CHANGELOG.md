@@ -20,5 +20,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive documentation
 - GitHub Actions workflows for CI/CD
 
-[Unreleased]: https://github.com/USERNAME/neovim-config-template/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/USERNAME/neovim-config-template/releases/tag/v0.1.0
+[Unreleased]: https://github.com/greggh/neovim-config-template/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/greggh/neovim-config-template/releases/tag/v0.1.0

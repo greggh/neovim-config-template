@@ -1,225 +1,197 @@
 # Neovim Configuration Template
 
-[![GitHub License](https://img.shields.io/github/license/username/neovim-config?style=flat-square)](./LICENSE)
-[![Neovim Minimum Version](https://img.shields.io/badge/Neovim-0.8+-57A143?style=flat-square&logo=neovim)](https://neovim.io)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/username/neovim-config/ci.yml?branch=main&style=flat-square&logo=github)](https://github.com/username/neovim-config/actions/workflows/ci.yml)
+[\![GitHub License](https://img.shields.io/github/license/greggh/neovim-config-template?style=flat-square)](./LICENSE)
+[\![Neovim Minimum Version](https://img.shields.io/badge/Neovim-0.8+-57A143?style=flat-square&logo=neovim)](https://neovim.io)
+[\![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/greggh/neovim-config-template/ci.yml?branch=main&style=flat-square&logo=github)](https://github.com/greggh/neovim-config/actions/workflows/ci.yml)
 
 *A standardized Neovim configuration template with best practices and modern plugins*
 
 [Features](#features) •
 [Requirements](#requirements) •
 [Installation](#installation) •
-[Structure](#structure) •
 [Customization](#customization) •
-[Key Mappings](#key-mappings) •
 [Plugins](#plugins) •
-[License](#license)
-
-## Overview
-
-This template provides a well-structured, modular Neovim configuration designed to be both powerful out of the box and easy to customize. It combines best practices from the Neovim community with a carefully curated selection of plugins to create a productive development environment.
+[Key Mappings](#key-mappings) •
+[Contributing](#contributing)
 
 ## Features
 
-- **Modular Structure**: Well-organized configuration for easy navigation and customization
-- **Lazy Loading**: Fast startup with lazy-loaded plugins using lazy.nvim
-- **Modern UI**: Aesthetically pleasing interface with consistent theme and colors
-- **LSP Integration**: Rich code intelligence with built-in LSP support
-- **Smart Completion**: Context-aware code completion with blink.cmp
-- **Syntax Highlighting**: Advanced syntax highlighting via Treesitter
-- **Testing Support**: Built-in testing framework
-- **Git Integration**: Seamless Git workflow
-- **Keybinding Help**: Intuitive key binding discovery with which-key
-- **Documentation**: Comprehensive documentation with clear explanations
+- Modern plugin management with [lazy.nvim](https://github.com/folke/lazy.nvim)
+- Fast startup time with lazy loading
+- Powerful completion with [blink.cmp](https://github.com/greggh/blink.cmp) (placeholder for actual plugin)
+- Advanced diagnostics with [Trouble](https://github.com/folke/trouble.nvim)
+- Beautiful UI with [Catppuccin](https://github.com/catppuccin/nvim) and [Noice](https://github.com/folke/noice.nvim)
+- Integrated file explorer with [Snacks](https://github.com/greggh/snacks.nvim) (placeholder for actual plugin)
+- Telescope for fuzzy finding and much more
+- Performance profiling tools built-in
+- Comprehensive keymappings with which-key integration
+- Well-structured and modular configuration
 
 ## Requirements
 
-- Neovim 0.8+ (0.9+ recommended)
-- Git
-- A Nerd Font for icons (optional but recommended)
-- External dependencies (installed automatically via Mason):
-  - Language servers (e.g. lua_ls, pyright, tsserver)
-  - Linters and formatters
-  - DAP adapters
+- Neovim 0.8 or higher (0.9+ recommended)
+- Git 2.19.0 or higher
+- A Nerd Font (optional but recommended)
+- [ripgrep](https://github.com/BurntSushi/ripgrep) for Telescope (optional)
+- [fd](https://github.com/sharkdp/fd) for faster file finding (optional)
+- [lazygit](https://github.com/jesseduffield/lazygit) for Git integration (optional)
 
 ## Installation
 
-### New Configuration
+### Quick Install
 
-1. Backup your existing configuration (if any):
-   ```bash
-   mv ~/.config/nvim ~/.config/nvim.bak
-   ```
+```bash
+# Backup your existing config if needed
+mv ~/.config/nvim ~/.config/nvim.bak
 
-2. Clone this template:
-   ```bash
-   git clone https://github.com/username/neovim-config-template.git ~/.config/nvim
-   ```
+# Clone the template
+git clone https://github.com/greggh/neovim-config-template.git ~/.config/nvim
 
-3. Run the setup script to customize:
-   ```bash
-   cd ~/.config/nvim
-   ./scripts/setup.sh
-   ```
+# Start Neovim - plugins will be installed automatically
+nvim
+```
 
-4. Start Neovim to install plugins:
-   ```bash
-   nvim
-   ```
+### Manual Exploration
 
-### Extending Existing Configuration
+If you want to understand the template before installing:
 
-If you want to incorporate parts of this template into your existing setup:
+```bash
+# Clone to a temporary location
+git clone https://github.com/greggh/neovim-config-template.git /tmp/nvim-template
 
-1. Clone the repository to a temporary location:
-   ```bash
-   git clone https://github.com/username/neovim-config-template.git /tmp/nvim-template
-   ```
+# Look through the files
+cd /tmp/nvim-template
+```
 
-2. Copy specific modules or files as needed:
-   ```bash
-   cp -r /tmp/nvim-template/lua/plugins/ui.lua ~/.config/nvim/lua/plugins/
-   ```
+## Customization
 
-## Structure
+### Using User Config
+
+The easiest way to customize is by creating a `lua/user/init.lua` file:
+
+```lua
+-- In lua/user/init.lua
+return {
+  -- Override options
+  options = {
+    tabstop = 4,
+    background = "light",
+  },
+  
+  -- Add your own plugins
+  plugins = {
+    "YOUR_USERNAME/custom-plugin",
+    { "another/plugin", config = true },
+  },
+  
+  -- Execute custom code
+  setup = function()
+    -- Any custom code you want to run
+    vim.g.my_custom_var = "value"
+  end,
+}
+```
+
+### Directory Structure
 
 ```
-.
+~/.config/nvim/
 ├── init.lua                 # Entry point
 ├── lua/
 │   ├── config/              # Core configuration
 │   │   ├── autocmd.lua      # Auto commands
 │   │   ├── keymaps.lua      # Key mappings
 │   │   ├── lazy.lua         # Plugin manager setup
-│   │   └── options.lua      # Neovim options
+│   │   └── options.lua      # Vim options
 │   ├── plugins/             # Plugin configurations
-│   │   ├── coding/          # Development tools
-│   │   │   ├── completion.lua  # blink.cmp configuration
-│   │   │   ├── treesitter.lua  # Syntax highlighting
-│   │   │   └── cmdline.lua     # Command-line completion
-│   │   ├── lsp/            # LSP configuration
-│   │   │   ├── mason.lua      # LSP installer
-│   │   │   └── config.lua     # LSP server setup
-│   │   ├── finder/         # File finding tools
-│   │   ├── ui/             # UI enhancements
-│   │   └── snacks/         # Snacks Explorer configuration
-│   └── user/                # User customizations (optional)
-├── .stylua.toml             # Lua formatter config
-└── tests/                   # Test configurations
+│   │   ├── coding/          # Coding plugins (treesitter, completion)
+│   │   ├── colorscheme/     # Themes and colors
+│   │   ├── diagnostics/     # Linting and diagnostics
+│   │   ├── lsp/             # LSP configurations
+│   │   └── ui/              # UI enhancements
+│   └── utils/               # Utility functions
+└── tests/                   # Tests for your config
 ```
-
-## Customization
-
-### The `user` Directory
-
-The template provides a separate directory for user customizations in `lua/user/`. Files in this directory are loaded after the core configuration, allowing you to override settings without modifying the original files.
-
-To customize:
-
-1. Create the directory structure:
-   ```lua
-   mkdir -p ~/.config/nvim/lua/user
-   ```
-
-2. Create your customization files:
-   ```lua
-   -- ~/.config/nvim/lua/user/init.lua
-   -- This file is loaded after all other configuration
-
-   -- Override options
-   vim.opt.relativenumber = false
-
-   -- Add custom autocommands
-   vim.api.nvim_create_autocmd("FileType", {
-     pattern = "markdown",
-     callback = function()
-       vim.opt_local.spell = true
-     end,
-   })
-
-   -- Custom keymaps
-   vim.keymap.set("n", "<leader>x", "<cmd>CustomCommand<CR>")
-   ```
-
-3. Add your own plugins:
-   ```lua
-   -- ~/.config/nvim/lua/user/plugins.lua
-   return {
-     {
-       "username/custom-plugin",
-       config = function()
-         require("custom-plugin").setup({})
-       end,
-     },
-   }
-   ```
-
-## Key Mappings
-
-The template comes with carefully chosen key mappings designed for productivity. Here are some highlights:
-
-| Key                  | Mode | Action                       |
-|----------------------|------|------------------------------|
-| `<Space>`            | N    | Leader key                   |
-| `<C-h/j/k/l>`        | N    | Navigate windows             |
-| `<C-s>`              | N    | Save file                    |
-| `<C-q>`              | N    | Quit                         |
-| `<leader>e`          | N    | Toggle file explorer         |
-| `<leader>ca`         | N    | Code actions                 |
-| `<leader>f`          | N    | Find files                   |
-| `<leader>g`          | N    | Git commands                 |
-| `gd`                 | N    | Go to definition             |
-| `K`                  | N    | Show documentation           |
-| `<leader>rn`         | N    | Rename symbol                |
-| `<leader>cd`         | N    | Show diagnostics             |
-| `<leader>w`          | N    | Save                         |
-| `<leader>q`          | N    | Quit                         |
-
-For a complete list, press `<Space>` and wait for the which-key popup, or see `lua/config/keymaps.lua`.
 
 ## Plugins
 
-This template includes a carefully selected set of plugins, all configured for optimal performance and user experience. Some highlights include:
+This template includes a carefully selected set of plugins:
 
-| Plugin            | Purpose                       |
-|-------------------|-------------------------------|
-| Catppuccin        | Beautiful colorscheme         |
-| Lualine           | Status line                   |
-| Snacks.nvim        | Feature-rich explorer/UI      |
-| Treesitter        | Advanced syntax highlighting  |
-| nvim-lspconfig    | LSP configuration             |
-| Mason             | LSP/DAP/linter installer      |
-| blink.cmp         | Modern completion engine      |
-| blink.compat      | Compatibility layer           |
-| Noice.nvim        | Enhanced UI notifications     |
-| LuaSnip           | Snippet engine                |
-| Telescope         | Fuzzy finder                  |
-| Which-key         | Keybinding helper             |
-| gitsigns          | Git integration               |
+### Core Plugins
+- [lazy.nvim](https://github.com/folke/lazy.nvim) - Modern plugin manager
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) - Lua functions library
+- [blink.cmp](https://github.com/greggh/blink.cmp) - Advanced completion (placeholder)
 
-All plugins are lazy-loaded for optimal startup performance.
+### Editor Features
+- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) - Syntax highlighting
+- [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) - Fuzzy finder
+- [which-key.nvim](https://github.com/folke/which-key.nvim) - Keybinding helper
+- [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) - Highlight TODOs
+- [trouble.nvim](https://github.com/folke/trouble.nvim) - Diagnostics list
 
-## License
+### UI Enhancements
+- [catppuccin](https://github.com/catppuccin/nvim) - Modern colorscheme
+- [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim) - Status line
+- [noice.nvim](https://github.com/folke/noice.nvim) - UI enhancements
+- [snacks.nvim](https://github.com/greggh/snacks.nvim) - File explorer (placeholder)
 
-This template is released under the MIT License. See the [LICENSE](LICENSE) file for details.
+See the `lua/plugins` directory for the complete list and configurations.
 
-## Acknowledgements
+## Key Mappings
 
-- [Neovim](https://neovim.io/) - The core editor
-- [lazy.nvim](https://github.com/folke/lazy.nvim) - Plugin manager
-- [Catppuccin](https://github.com/catppuccin/nvim) - Colorscheme
-- Community contributors and plugin authors
+This template uses Space as the leader key. Here are some important mappings:
 
----
+| Mapping | Description |
+|---------|-------------|
+| `<leader>e` | Toggle file explorer |
+| `<leader>ff` | Find files |
+| `<leader>fg` | Live grep |
+| `<leader>fb` | Find buffers |
+| `<leader>gg` | Open LazyGit |
+| `<leader>xx` | Open diagnostics list |
+| `<leader>pp` | Generate profile report |
+| `<leader>nn` | Open notifications panel |
 
-<p align="center">
-  Made with ❤️ for the Neovim community
-</p>
+For a complete list, press `<leader>` to see a which-key popup, or check `lua/config/keymaps.lua`.
+
+## Profiling
+
+Built-in profiling tools help you optimize your configuration:
+
+| Mapping | Description |
+|---------|-------------|
+| `<leader>pp` | Generate profile report |
+| `<leader>ps` | Show profile summary |
+| `<leader>pL` | List all profile logs |
+| `<leader>pa` | Analyze plugin performance |
+| `<leader>pc` | Clean up profile logs |
+
+Enable profiling by starting Neovim with:
+
+```bash
+NVIM_PROFILE=1 nvim
+```
+
 ## Discussions
 
-Have questions or ideas? Join the conversation in [GitHub Discussions](https://github.com/USERNAME/neovim-config-template/discussions).
+Have questions or ideas? Join the conversation in [GitHub Discussions](https://github.com/greggh/neovim-config-template/discussions).
 
 - **Questions**: For help with configuration or troubleshooting
 - **Ideas**: Suggest new features or improvements
 - **Show and Tell**: Share your customizations and setups
 - **General**: For any other topics related to this configuration
+
+## Contributing
+
+Contributions are welcome\! Check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+- [lazy.nvim](https://github.com/folke/lazy.nvim) - The plugin manager that makes this configuration possible
+- [Kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) - Inspiration for some aspects of this template
+- [Neovim](https://neovim.io) - The foundation of modern text editing
+- [hooks-util](https://github.com/greggh/hooks-util) - Git hooks framework used in this project
