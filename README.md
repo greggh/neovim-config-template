@@ -1,8 +1,13 @@
 # Neovim Configuration Template
 
-[\![GitHub License](https://img.shields.io/github/license/greggh/neovim-config-template?style=flat-square)](./LICENSE)
-[\![Neovim Minimum Version](https://img.shields.io/badge/Neovim-0.8+-57A143?style=flat-square&logo=neovim)](https://neovim.io)
-[\![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/greggh/neovim-config-template/ci.yml?branch=main&style=flat-square&logo=github)](https://github.com/greggh/neovim-config/actions/workflows/ci.yml)
+[![GitHub License](https://img.shields.io/github/license/greggh/neovim-config-template?style=flat-square)](https://github.com/greggh/neovim-config-template/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/greggh/neovim-config-template?style=flat-square)](https://github.com/greggh/neovim-config-template/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/greggh/neovim-config-template?style=flat-square)](https://github.com/greggh/neovim-config-template/issues)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/greggh/neovim-config-template?style=flat-square)](https://github.com/greggh/neovim-config-template/commits/main)
+[![Neovim Version](https://img.shields.io/badge/Neovim-0.8%2B-blueviolet?style=flat-square&logo=neovim)](https://github.com/neovim/neovim)
+[![CI](https://img.shields.io/github/actions/workflow/status/greggh/neovim-config-template/ci.yml?branch=main&style=flat-square&logo=github)](https://github.com/greggh/neovim-config-template/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/Version-0.1.1-blue?style=flat-square)](https://github.com/greggh/neovim-config-template/releases/tag/v0.1.1)
+[![Discussions](https://img.shields.io/github/discussions/greggh/neovim-config-template?style=flat-square&logo=github)](https://github.com/greggh/neovim-config-template/discussions)
 
 *A standardized Neovim configuration template with best practices and modern plugins*
 
@@ -183,7 +188,7 @@ Have questions or ideas? Join the conversation in [GitHub Discussions](https://g
 
 ## Contributing
 
-Contributions are welcome\! Check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions are welcome! Check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
