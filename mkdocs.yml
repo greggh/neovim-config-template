@@ -1,0 +1,35 @@
+site_name: Neovim Config Template
+site_description: A standardized Neovim configuration template with best practices and modern plugins
+site_url: https://greggh.github.io/neovim-config-template/
+
+repo_name: greggh/neovim-config-template
+repo_url: https://github.com/greggh/neovim-config-template
+
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Installation: INSTALLATION.md
+  - Features: FEATURES.md
+  - Configuration: CONFIGURATION.md
+  - Contributing: CONTRIBUTING.md
