@@ -1,3 +1,4 @@
+---
 name: CI
 
 on:
@@ -7,7 +8,7 @@ on:
       - develop
   pull_request:
     branches:
-      - '*'
+      - "*"
 
 jobs:
   lint:
@@ -16,45 +17,50 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Lua
         uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: "5.1"
-      
+
       - name: Install LuaRocks
         uses: leafo/gh-actions-luarocks@v4
-      
+
       - name: Install Dependencies
         run: |
           # Install luacheck via LuaRocks
           luarocks install luacheck
-          
+
           # Install StyLua binary directly (latest version)
           STYLUA_VERSION="2.0.2"
-          curl -sL "https://github.com/JohnnyMorganz/StyLua/releases/download/v${STYLUA_VERSION}/stylua-linux-x86_64.zip" -o stylua.zip
+          BASE_URL="https://github.com/JohnnyMorganz/StyLua/releases/download"
+          curl -sL \
+          "${BASE_URL}/v${STYLUA_VERSION}/stylua-linux-x86_64.zip" \
+          -o stylua.zip
           unzip -q stylua.zip
           chmod +x stylua
           sudo mv stylua /usr/local/bin/
-          
+
           # Verify installations
           which luacheck
           stylua --version
-      
+
       - name: Fix Linting Issues
         run: |
           # Fix known linting issues
           find lua -type f -name "*.lua" -exec sed -i 's/ *$//' {} \;
-          find lua -type f -name "*.lua" -exec sed -i 's/local opts = { noremap = true, silent = true }/local opts = { noremap = true, silent = true } -- Used in keymaps/g' {} \;
-      
+          # Fix opts string for consistent comment styling
+          PATTERN='s/local opts = { noremap = true, silent = true }/local opts = { noremap = true, silent = true } -- Used in keymaps/g'
+          find lua -type f -name "*.lua" -exec sed -i "$PATTERN" {} \;
+
       - name: Lint with Luacheck
         run: |
           if [ -f .luacheckrc ]; then
-            luacheck lua || echo "Luacheck found issues - these should be fixed in code rather than ignored"
+            luacheck lua || echo "Luacheck found issues - fix in code"
           else
             echo "No .luacheckrc found, skipping luacheck"
           fi
-      
+
       - name: Format with StyLua first, then check
         run: |
           if [ -f .stylua.toml ]; then
@@ -77,18 +83,18 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Neovim
         uses: rhysd/action-setup-vim@v1
         with:
           neovim: true
           version: stable
-      
+
       - name: Install test dependencies
         run: |
           # Install Lua for running tests
           sudo apt-get install -y lua5.1 liblua5.1-dev
-      
+
       - name: Run Tests
         timeout-minutes: 2
         run: |
@@ -99,13 +105,13 @@ jobs:
               echo "No spec directory found, skipping tests"
               exit 0
             fi
-            
+
             TEST_FILES=$(find tests/spec -name "*.lua" -type f)
             if [ -z "$TEST_FILES" ]; then
               echo "No test files found, skipping tests"
               exit 0
             fi
-            
+
             # Check if we have our script
             if [ -f scripts/run_tests.sh ]; then
               chmod +x scripts/run_tests.sh
@@ -115,11 +121,10 @@ jobs:
               # Create a proper test harness that actually works
               echo "Setting up minimal test harness"
               mkdir -p tests/spec || true
-              
-              # Instead of creating a heredoc which causes YAML issues,
-              # use simpler approach by creating a minimal shell script
-              echo 'echo "Creating minimal test runtime"' > create_minimal_test.sh
-              echo 'cat > tests/minimal.lua << ENDOFFILE' >> create_minimal_test.sh
+
+              # Create a minimal shell script instead of heredoc
+              echo 'echo "Creating test runtime"' > create_minimal_test.sh
+              echo 'cat > tests/minimal.lua << EOF' >> create_minimal_test.sh
               echo 'vim = vim or {}' >> create_minimal_test.sh
               echo 'vim.g = {mapleader = " "}' >> create_minimal_test.sh
               echo 'vim.o = {}' >> create_minimal_test.sh
@@ -128,7 +133,7 @@ jobs:
               echo 'vim.cmd = function() end' >> create_minimal_test.sh
               echo '' >> create_minimal_test.sh
               echo '_G.describe = function(name, fn)' >> create_minimal_test.sh
-              echo '  print("\\nTEST GROUP: " .. name)' >> create_minimal_test.sh
+              echo '  print("TEST GROUP: " .. name)' >> create_minimal_test.sh
               echo '  fn()' >> create_minimal_test.sh
               echo 'end' >> create_minimal_test.sh
               echo '' >> create_minimal_test.sh
@@ -137,7 +142,8 @@ jobs:
               echo '  if status then' >> create_minimal_test.sh
               echo '    print("  PASS: " .. name)' >> create_minimal_test.sh
               echo '  else' >> create_minimal_test.sh
-              echo '    print("  FAIL: " .. name .. " - " .. tostring(err))' >> create_minimal_test.sh
+              echo '    print("  FAIL: " .. name)' >> create_minimal_test.sh
+              echo '    print("  ERROR: " .. tostring(err))' >> create_minimal_test.sh
               echo '    os.exit(1)' >> create_minimal_test.sh
               echo '  end' >> create_minimal_test.sh
               echo 'end' >> create_minimal_test.sh
@@ -145,13 +151,16 @@ jobs:
               echo '_G.assert = {' >> create_minimal_test.sh
               echo '  equal = function(expected, actual)' >> create_minimal_test.sh
               echo '    if expected ~= actual then' >> create_minimal_test.sh
-              echo '      error("Expected: " .. tostring(expected) .. ", got: " .. tostring(actual))' >> create_minimal_test.sh
+              echo '      local msg = "Expected: " .. tostring(expected)' >> create_minimal_test.sh
+              echo '      msg = msg .. ", got: " .. tostring(actual)' >> create_minimal_test.sh
+              echo '      error(msg)' >> create_minimal_test.sh
               echo '    end' >> create_minimal_test.sh
               echo '    return true' >> create_minimal_test.sh
               echo '  end,' >> create_minimal_test.sh
               echo '  truthy = function(value)' >> create_minimal_test.sh
               echo '    if not value then' >> create_minimal_test.sh
-              echo '      error("Expected value to be truthy, got: " .. tostring(value))' >> create_minimal_test.sh
+              echo '      local msg = "Expected value to be truthy, got: "' >> create_minimal_test.sh
+              echo '      error(msg .. tostring(value))' >> create_minimal_test.sh
               echo '    end' >> create_minimal_test.sh
               echo '    return true' >> create_minimal_test.sh
               echo '  end,' >> create_minimal_test.sh
@@ -159,35 +168,38 @@ jobs:
               echo '    errors = function(fn)' >> create_minimal_test.sh
               echo '      local status, err = pcall(fn)' >> create_minimal_test.sh
               echo '      if not status then' >> create_minimal_test.sh
-              echo '        error("Expected no errors, but got: " .. tostring(err))' >> create_minimal_test.sh
+              echo '        local msg = "Expected no errors, but got: "' >> create_minimal_test.sh
+              echo '        error(msg .. tostring(err))' >> create_minimal_test.sh
               echo '      end' >> create_minimal_test.sh
               echo '      return true' >> create_minimal_test.sh
               echo '    end' >> create_minimal_test.sh
               echo '  }' >> create_minimal_test.sh
               echo '}' >> create_minimal_test.sh
-              echo 'ENDOFFILE' >> create_minimal_test.sh
+              echo 'EOF' >> create_minimal_test.sh
               chmod +x create_minimal_test.sh
               ./create_minimal_test.sh
-              
-              # Find all test files
+
+              # Find test files in spec directory
               TEST_FILES=$(find tests/spec -name "*.lua" -type f 2>/dev/null || echo "")
               if [ -n "$TEST_FILES" ]; then
                 echo "Found test files to run"
-                # Run each test file individually using pure Lua (no Neovim needed)
+                # Run each test file individually using pure Lua
                 for test_file in $TEST_FILES; do
                   test_name=$(basename "$test_file")
                   echo "Running test: $test_name"
-                  
-                  # Use the standalone lua interpreter instead of Neovim
+
+                  # Use standalone lua instead of Neovim
                   pushd tests > /dev/null
-                  # Capture the output and debug information
+                  # Capture debug information
                   echo "Current directory: $(pwd)"
                   echo "Testing file: spec/$test_name"
                   ls -la minimal.lua spec/ || true
-                  LUA_PATH=";;?.lua" lua5.1 -e "dofile('minimal.lua'); dofile('spec/$test_name')"
+                  # Set path and run test
+                  LUA_PATH=";;?.lua" lua5.1 -e "dofile('minimal.lua');\
+                  dofile('spec/$test_name')"
                   test_result=$?
                   popd > /dev/null
-                  
+
                   if [ $test_result -ne 0 ]; then
                     echo "Test failed: $test_name"
                     exit $test_result
@@ -207,10 +219,10 @@ jobs:
     name: Check Documentation
     runs-on: ubuntu-latest
     timeout-minutes: 2
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Check Documentation
         run: |
           if [ -d doc ]; then
