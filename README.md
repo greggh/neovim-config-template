@@ -203,11 +203,11 @@ Contributions are welcome! Check out [CONTRIBUTING.md](CONTRIBUTING.md) for guid
    - Luacheck for linting
    - StyLua for formatting
 
-3. Set up pre-commit hooks:
+3. Set up pre-commit hooks (important first step!):
    ```bash
    ./scripts/setup-hooks.sh
    ```
-   This will enable automatic formatting, linting, and testing before each commit.
+   This will enable automatic formatting, linting, and testing before each commit. Make sure to run this before making any changes to ensure code quality.
 
 ### Project Structure
 
