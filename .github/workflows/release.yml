@@ -1,3 +1,4 @@
+---
 name: Release
 
 on:
@@ -20,15 +21,17 @@ jobs:
       - name: Get version from tag
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-        
+
       - name: Extract Changelog
         id: extract-changelog
         run: |
           # Extract relevant section from CHANGELOG.md
-          VERSION=$(echo ${{ steps.get_version.outputs.VERSION }} | sed 's/^v//')
-          sed -n "/## \[${VERSION}\]/,/## \[/p" CHANGELOG.md | sed '$d' > RELEASE_NOTES.md
+          VERSION=$(echo ${{ steps.get_version.outputs.VERSION }} |\
+            sed 's/^v//')
+          sed -n "/## \[${VERSION}\]/,/## \[/p" CHANGELOG.md |\
+            sed '$d' > RELEASE_NOTES.md
           cat RELEASE_NOTES.md
-        
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
