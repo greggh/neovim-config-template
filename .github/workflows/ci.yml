@@ -55,12 +55,18 @@ jobs:
             echo "No .luacheckrc found, skipping luacheck"
           fi
       
-      - name: Check style with StyLua
+      - name: Format with StyLua first, then check
         run: |
           if [ -f .stylua.toml ]; then
-            stylua --check lua
+            # Format the files first
+            stylua lua
+            # Then verify formatting
+            git diff --exit-code || (echo "Formatting issues detected. StyLua would make changes to the files." && exit 1)
           elif [ -f stylua.toml ]; then
-            stylua --check lua
+            # Format the files first
+            stylua lua
+            # Then verify formatting
+            git diff --exit-code || (echo "Formatting issues detected. StyLua would make changes to the files." && exit 1)
           else
             echo "No stylua.toml found, skipping stylua check"
           fi
@@ -93,12 +99,9 @@ jobs:
             echo "Tests directory found, running tests..."
             if [ -f tests/minimal-init.lua ]; then
               echo "Using minimal-init.lua for tests"
-              # Create test pattern file for plenary to find tests
-              cd tests && mkdir -p .plenary-busted
-              echo "return {'spec'}" > .plenary-busted/pattern.lua
-              
-              # Run tests with full path to spec directory
-              nvim --headless --noplugin -u minimal-init.lua -c "lua require('plenary.busted').run('./spec')" || exit 1
+              # Run tests with the correct plenary command to find spec files
+              cd tests && nvim --headless --noplugin -u minimal-init.lua \
+                -c "lua require('plenary.busted').run('spec/')" || exit 1
             else
               echo "No minimal-init.lua found, skipping tests"
             fi
