@@ -190,6 +190,43 @@ Have questions or ideas? Join the conversation in [GitHub Discussions](https://g
 
 Contributions are welcome! Check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+### Development Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/greggh/neovim-config-template.git
+   cd neovim-config-template
+   ```
+
+2. Install development dependencies:
+   - Neovim 0.8+
+   - Luacheck for linting
+   - StyLua for formatting
+
+3. Set up pre-commit hooks:
+   ```bash
+   ./scripts/setup-hooks.sh
+   ```
+   This will enable automatic formatting, linting, and testing before each commit.
+
+### Project Structure
+
+```
+.
+├── lua/               # Lua configuration files
+│   ├── config/        # Core configuration modules
+│   ├── plugins/       # Plugin configurations
+│   └── utils/         # Utility functions
+├── plugin/            # Plugin files that are always loaded
+├── tests/             # Test suite
+├── .github/           # GitHub workflows and templates
+├── .githooks/         # Git hooks for development
+├── scripts/           # Development and utility scripts
+├── .stylua.toml       # StyLua configuration
+├── .luacheckrc        # Luacheck configuration
+└── init.lua           # Main entry point
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
