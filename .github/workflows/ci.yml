@@ -117,7 +117,7 @@ jobs:
               mkdir -p tests/spec || true
               
               # Create a proper minimal test setup
-              cat > tests/minimal.lua << 'EOT'
+              cat > tests/minimal.lua << EOF
 -- Minimal test runtime that properly mocks necessary Neovim APIs
 -- Create a proper mock Neovim environment for tests
 vim = vim or {}
@@ -129,7 +129,7 @@ vim.cmd = function() end
 
 -- Proper test framework
 _G.describe = function(name, fn)
-  print("\nTEST GROUP: " .. name)
+  print("\\nTEST GROUP: " .. name)
   fn()
 end
 
@@ -169,7 +169,7 @@ _G.assert = {
     end
   }
 }
-EOT
+EOF
               
               # Find all test files
               TEST_FILES=$(find tests/spec -name "*.lua" -type f 2>/dev/null || echo "")
