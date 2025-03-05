@@ -38,6 +38,10 @@ for test_file in "$SPEC_DIR"/*.lua; do
     # Save the current directory and move to test dir
     pushd "$TEST_DIR" > /dev/null
     
+    # Verify files exist
+    echo "Testing path: $(pwd)/minimal.lua and $(pwd)/spec/$test_name"
+    ls -la minimal.lua "spec/$test_name" || true
+    
     # Run the minimal test script with the current spec file
     # This will exit with error code if any test fails
     LUA_PATH=";;$TEST_DIR/?.lua" lua -e "dofile('minimal.lua'); dofile('spec/$test_name')"

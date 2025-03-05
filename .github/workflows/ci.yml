@@ -86,11 +86,8 @@ jobs:
       
       - name: Install test dependencies
         run: |
-          if [ -d tests ]; then
-            # Only install if tests exist
-            mkdir -p ~/.local/share/nvim/site/pack/vendor/start
-            git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
-          fi
+          # Install Lua for running tests
+          sudo apt-get install -y lua5.1 liblua5.1-dev
       
       - name: Run Tests
         timeout-minutes: 2
@@ -185,7 +182,11 @@ EOT
                   
                   # Use the standalone lua interpreter instead of Neovim
                   pushd tests > /dev/null
-                  LUA_PATH=";;?.lua" lua -e "dofile('minimal.lua'); dofile('spec/$test_name')"
+                  # Capture the output and debug information
+                  echo "Current directory: $(pwd)"
+                  echo "Testing file: spec/$test_name"
+                  ls -la minimal.lua spec/ || true
+                  LUA_PATH=";;?.lua" lua5.1 -e "dofile('minimal.lua'); dofile('spec/$test_name')"
                   test_result=$?
                   popd > /dev/null
                   
