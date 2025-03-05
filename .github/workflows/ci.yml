@@ -1,14 +1,14 @@
 ---
 name: CI
 
-on:
+'on':
   push:
     branches:
       - main
       - develop
   pull_request:
     branches:
-      - "*"
+      - '*'
 
 jobs:
   lint:
@@ -50,7 +50,8 @@ jobs:
           # Fix known linting issues
           find lua -type f -name "*.lua" -exec sed -i 's/ *$//' {} \;
           # Fix opts string for consistent comment styling
-          PATTERN='s/local opts = { noremap = true, silent = true }/local opts = { noremap = true, silent = true } -- Used in keymaps/g'
+          PATTERN='s/local opts = { noremap = true, silent = true }/local opts = { noremap = true'
+          PATTERN="$PATTERN, silent = true } -- Used in keymaps/g"
           find lua -type f -name "*.lua" -exec sed -i "$PATTERN" {} \;
 
       - name: Lint with Luacheck
@@ -144,7 +145,7 @@ jobs:
               echo '  else' >> create_minimal_test.sh
               echo '    print("  FAIL: " .. name)' >> create_minimal_test.sh
               echo '    print("  ERROR: " .. tostring(err))' >> create_minimal_test.sh
-              echo '    os.exit(1)' >> create_minimal_test.sh
+              echo '    os.exit(1) -- Exit with failure code' >> create_minimal_test.sh
               echo '  end' >> create_minimal_test.sh
               echo 'end' >> create_minimal_test.sh
               echo '' >> create_minimal_test.sh
@@ -180,7 +181,8 @@ jobs:
               ./create_minimal_test.sh
 
               # Find test files in spec directory
-              TEST_FILES=$(find tests/spec -name "*.lua" -type f 2>/dev/null || echo "")
+              FIND_CMD="find tests/spec -name \"*.lua\" -type f 2>/dev/null"
+              TEST_FILES=$(eval "$FIND_CMD" || echo "")
               if [ -n "$TEST_FILES" ]; then
                 echo "Found test files to run"
                 # Run each test file individually using pure Lua

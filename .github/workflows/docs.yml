@@ -2,7 +2,7 @@
 # Example documentation workflow
 name: Documentation
 
-on:
+'on':
   push:
     branches: ["main"]
     paths:
