@@ -97,13 +97,107 @@ jobs:
         run: |
           if [ -d tests ]; then
             echo "Tests directory found, running tests..."
-            if [ -f tests/minimal-init.lua ]; then
-              echo "Using minimal-init.lua for tests"
-              # Run tests with wildcard to find all test files in spec directory
-              cd tests && nvim --headless --noplugin -u minimal-init.lua \
-                -c "lua require('plenary.busted').run('spec/config_spec.lua')" || exit 0
+            # First check if our test files exist
+            if [ ! -d tests/spec ]; then
+              echo "No spec directory found, skipping tests"
+              exit 0
+            fi
+            
+            TEST_FILES=$(find tests/spec -name "*.lua" -type f)
+            if [ -z "$TEST_FILES" ]; then
+              echo "No test files found, skipping tests"
+              exit 0
+            fi
+            
+            # Check if we have our script
+            if [ -f scripts/run_tests.sh ]; then
+              chmod +x scripts/run_tests.sh
+              scripts/run_tests.sh
             else
-              echo "No minimal-init.lua found, skipping tests"
+              echo "No test script found, using direct approach"
+              # Create a proper test harness that actually works
+              echo "Setting up minimal test harness"
+              mkdir -p tests/spec || true
+              
+              # Create a proper minimal test setup
+              cat > tests/minimal.lua << 'EOT'
+-- Minimal test runtime that properly mocks necessary Neovim APIs
+-- Create a proper mock Neovim environment for tests
+vim = vim or {}
+vim.g = {mapleader = " "}
+vim.o = {}
+vim.api = {}
+vim.fn = {}
+vim.cmd = function() end
+
+-- Proper test framework
+_G.describe = function(name, fn)
+  print("\nTEST GROUP: " .. name)
+  fn()
+end
+
+_G.it = function(name, fn)
+  local status, err = pcall(fn)
+  if status then
+    print("  PASS: " .. name)
+  else
+    print("  FAIL: " .. name .. " - " .. tostring(err))
+    os.exit(1) -- Exit with error to properly report test failures
+  end
+end
+
+-- Test assertion library
+_G.assert = {
+  equal = function(expected, actual)
+    if expected ~= actual then
+      error("Expected: " .. tostring(expected) .. ", got: " .. tostring(actual))
+    end
+    return true
+  end,
+  
+  truthy = function(value)
+    if not value then
+      error("Expected value to be truthy, got: " .. tostring(value))
+    end
+    return true
+  end,
+  
+  has_no = {
+    errors = function(fn)
+      local status, err = pcall(fn)
+      if not status then
+        error("Expected no errors, but got: " .. tostring(err))
+      end
+      return true
+    end
+  }
+}
+EOT
+              
+              # Find all test files
+              TEST_FILES=$(find tests/spec -name "*.lua" -type f 2>/dev/null || echo "")
+              if [ -n "$TEST_FILES" ]; then
+                echo "Found test files to run"
+                # Run each test file individually using pure Lua (no Neovim needed)
+                for test_file in $TEST_FILES; do
+                  test_name=$(basename "$test_file")
+                  echo "Running test: $test_name"
+                  
+                  # Use the standalone lua interpreter instead of Neovim
+                  pushd tests > /dev/null
+                  LUA_PATH=";;?.lua" lua -e "dofile('minimal.lua'); dofile('spec/$test_name')"
+                  test_result=$?
+                  popd > /dev/null
+                  
+                  if [ $test_result -ne 0 ]; then
+                    echo "Test failed: $test_name"
+                    exit $test_result
+                  fi
+                  echo "Test passed: $test_name"
+                done
+              else
+                echo "No test files found"
+              fi
             fi
           else
             echo "No tests directory found, skipping tests"
