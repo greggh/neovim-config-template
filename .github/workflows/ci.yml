@@ -204,7 +204,7 @@ EOT
             echo "No tests directory found, skipping tests"
             exit 0
           fi
-  
+
   docs:
     name: Check Documentation
     runs-on: ubuntu-latest
