@@ -47,8 +47,7 @@ git -C /home/gregg/Projects/neovim/neovim-config-template pull
 bash /home/gregg/Projects/neovim/neovim-config-template/scripts/run_tests.sh
 
 # Run a specific test file manually
-cd /home/gregg/Projects/neovim/neovim-config-template/tests
-LUA_PATH=";;./?.lua" lua -e "dofile('minimal.lua'); dofile('spec/config_spec.lua')"
+env -C /home/gregg/Projects/neovim/neovim-config-template/tests LUA_PATH=";;./?.lua" lua -e "dofile('minimal.lua'); dofile('spec/config_spec.lua')"
 
 # Run tests with verbose output
 VERBOSE=1 bash /home/gregg/Projects/neovim/neovim-config-template/scripts/run_tests.sh
@@ -58,10 +57,10 @@ VERBOSE=1 bash /home/gregg/Projects/neovim/neovim-config-template/scripts/run_te
 
 ```bash
 # Run luacheck with configuration from .luacheckrc
-cd /home/gregg/Projects/neovim/neovim-config-template && luacheck .
+env -C /home/gregg/Projects/neovim/neovim-config-template luacheck .
 
 # Format with stylua using .stylua.toml configuration
-cd /home/gregg/Projects/neovim/neovim-config-template && stylua .
+env -C /home/gregg/Projects/neovim/neovim-config-template stylua .
 
 # Check a specific file with luacheck
 luacheck /home/gregg/Projects/neovim/neovim-config-template/lua/config/options.lua
