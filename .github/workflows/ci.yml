@@ -116,60 +116,58 @@ jobs:
               echo "Setting up minimal test harness"
               mkdir -p tests/spec || true
               
-              # Create a proper minimal test setup
-              cat > tests/minimal.lua << EOF
--- Minimal test runtime that properly mocks necessary Neovim APIs
--- Create a proper mock Neovim environment for tests
-vim = vim or {}
-vim.g = {mapleader = " "}
-vim.o = {}
-vim.api = {}
-vim.fn = {}
-vim.cmd = function() end
-
--- Proper test framework
-_G.describe = function(name, fn)
-  print("\\nTEST GROUP: " .. name)
-  fn()
-end
-
-_G.it = function(name, fn)
-  local status, err = pcall(fn)
-  if status then
-    print("  PASS: " .. name)
-  else
-    print("  FAIL: " .. name .. " - " .. tostring(err))
-    os.exit(1) -- Exit with error to properly report test failures
-  end
-end
-
--- Test assertion library
-_G.assert = {
-  equal = function(expected, actual)
-    if expected ~= actual then
-      error("Expected: " .. tostring(expected) .. ", got: " .. tostring(actual))
-    end
-    return true
-  end,
-  
-  truthy = function(value)
-    if not value then
-      error("Expected value to be truthy, got: " .. tostring(value))
-    end
-    return true
-  end,
-  
-  has_no = {
-    errors = function(fn)
-      local status, err = pcall(fn)
-      if not status then
-        error("Expected no errors, but got: " .. tostring(err))
-      end
-      return true
-    end
-  }
-}
-EOF
+              # Instead of creating a heredoc which causes YAML issues,
+              # use simpler approach by creating a minimal shell script
+              echo 'echo "Creating minimal test runtime"' > create_minimal_test.sh
+              echo 'cat > tests/minimal.lua << ENDOFFILE' >> create_minimal_test.sh
+              echo 'vim = vim or {}' >> create_minimal_test.sh
+              echo 'vim.g = {mapleader = " "}' >> create_minimal_test.sh
+              echo 'vim.o = {}' >> create_minimal_test.sh
+              echo 'vim.api = {}' >> create_minimal_test.sh
+              echo 'vim.fn = {}' >> create_minimal_test.sh
+              echo 'vim.cmd = function() end' >> create_minimal_test.sh
+              echo '' >> create_minimal_test.sh
+              echo '_G.describe = function(name, fn)' >> create_minimal_test.sh
+              echo '  print("\\nTEST GROUP: " .. name)' >> create_minimal_test.sh
+              echo '  fn()' >> create_minimal_test.sh
+              echo 'end' >> create_minimal_test.sh
+              echo '' >> create_minimal_test.sh
+              echo '_G.it = function(name, fn)' >> create_minimal_test.sh
+              echo '  local status, err = pcall(fn)' >> create_minimal_test.sh
+              echo '  if status then' >> create_minimal_test.sh
+              echo '    print("  PASS: " .. name)' >> create_minimal_test.sh
+              echo '  else' >> create_minimal_test.sh
+              echo '    print("  FAIL: " .. name .. " - " .. tostring(err))' >> create_minimal_test.sh
+              echo '    os.exit(1)' >> create_minimal_test.sh
+              echo '  end' >> create_minimal_test.sh
+              echo 'end' >> create_minimal_test.sh
+              echo '' >> create_minimal_test.sh
+              echo '_G.assert = {' >> create_minimal_test.sh
+              echo '  equal = function(expected, actual)' >> create_minimal_test.sh
+              echo '    if expected ~= actual then' >> create_minimal_test.sh
+              echo '      error("Expected: " .. tostring(expected) .. ", got: " .. tostring(actual))' >> create_minimal_test.sh
+              echo '    end' >> create_minimal_test.sh
+              echo '    return true' >> create_minimal_test.sh
+              echo '  end,' >> create_minimal_test.sh
+              echo '  truthy = function(value)' >> create_minimal_test.sh
+              echo '    if not value then' >> create_minimal_test.sh
+              echo '      error("Expected value to be truthy, got: " .. tostring(value))' >> create_minimal_test.sh
+              echo '    end' >> create_minimal_test.sh
+              echo '    return true' >> create_minimal_test.sh
+              echo '  end,' >> create_minimal_test.sh
+              echo '  has_no = {' >> create_minimal_test.sh
+              echo '    errors = function(fn)' >> create_minimal_test.sh
+              echo '      local status, err = pcall(fn)' >> create_minimal_test.sh
+              echo '      if not status then' >> create_minimal_test.sh
+              echo '        error("Expected no errors, but got: " .. tostring(err))' >> create_minimal_test.sh
+              echo '      end' >> create_minimal_test.sh
+              echo '      return true' >> create_minimal_test.sh
+              echo '    end' >> create_minimal_test.sh
+              echo '  }' >> create_minimal_test.sh
+              echo '}' >> create_minimal_test.sh
+              echo 'ENDOFFILE' >> create_minimal_test.sh
+              chmod +x create_minimal_test.sh
+              ./create_minimal_test.sh
               
               # Find all test files
               TEST_FILES=$(find tests/spec -name "*.lua" -type f 2>/dev/null || echo "")
