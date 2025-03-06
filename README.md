@@ -1,3 +1,5 @@
+<div align="center">
+
 # Neovim Configuration Template
 
 [![GitHub License](https://img.shields.io/github/license/greggh/neovim-config-template?style=flat-square)](https://github.com/greggh/neovim-config-template/blob/main/LICENSE)
@@ -17,20 +19,23 @@
 [Customization](#customization) •
 [Plugins](#plugins) •
 [Key Mappings](#key-mappings) •
-[Contributing](#contributing)
+[Contributing](#contributing) •
+[License](#license)
+
+</div>
 
 ## Features
 
-- Modern plugin management with [lazy.nvim](https://github.com/folke/lazy.nvim)
-- Fast startup time with lazy loading
-- Powerful completion with [blink.cmp](https://github.com/greggh/blink.cmp) (placeholder for actual plugin)
-- Advanced diagnostics with [Trouble](https://github.com/folke/trouble.nvim)
-- Beautiful UI with [Catppuccin](https://github.com/catppuccin/nvim) and [Noice](https://github.com/folke/noice.nvim)
-- Integrated file explorer with [Snacks](https://github.com/greggh/snacks.nvim) (placeholder for actual plugin)
-- Telescope for fuzzy finding and much more
-- Performance profiling tools built-in
-- Comprehensive keymappings with which-key integration
-- Well-structured and modular configuration
+- 📦 **Plugin Management** - Modern plugin system with [lazy.nvim](https://github.com/folke/lazy.nvim)
+- ⚡ **Performance** - Fast startup time with lazy loading
+- 🧠 **Completion** - Powerful completion with [blink.cmp](https://github.com/greggh/blink.cmp)
+- 🔍 **Diagnostics** - Advanced diagnostics with [Trouble](https://github.com/folke/trouble.nvim)
+- 🎨 **Beautiful UI** - Modern look with [Catppuccin](https://github.com/catppuccin/nvim) and [Noice](https://github.com/folke/noice.nvim)
+- 📂 **File Explorer** - Integrated explorer with [Snacks](https://github.com/greggh/snacks.nvim)
+- 🔭 **Fuzzy Finding** - Telescope for searching files, text, and much more
+- 📊 **Performance** - Profiling tools built-in for optimization
+- ⌨️ **Keymaps** - Comprehensive mappings with which-key integration
+- 🧩 **Modular** - Well-structured and modular configuration
 
 ## Requirements
 
@@ -237,3 +242,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim) - Inspiration for some aspects of this template
 - [Neovim](https://neovim.io) - The foundation of modern text editing
 - [hooks-util](https://github.com/greggh/hooks-util) - Git hooks framework used in this project
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by <a href="https://github.com/greggh">greggh</a></p>
+</div>
